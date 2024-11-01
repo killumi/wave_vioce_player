@@ -1,39 +1,40 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# waved_audio_player
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+A Flutter package for displaying audio waveforms and controlling audio playback with a customizable user interface. Perfect for applications that require audio visualization, such as music players, audio editors, and more.
 
 ## Features
+- Visualize audio waveforms from various sources (assets, URLs, and device files).
+- Play, pause, and seek audio playback.
+- Customizable appearance with adjustable colors, sizes, and spacing.
+- Easy integration with existing Flutter applications.
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+![Waveform Example](assets/waveform_example.png)
 
 ## Getting started
+### Prerequisites
+- Flutter SDK (version >=1.17.0)
+- Dart SDK (version '>=3.0.0 <4.0.0')
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+To use the `waved_audio_player` package, add it to your `pubspec.yaml` file:
 
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
-```dart
-const like = 'sample';
+```yaml
+dependencies:
+  waved_audio_player: ^1.0.0
+  audioplayers: ^x.x.x  # Replace x.x.x with the latest version of audioplayers
 ```
-
+## Installation
+Run the following command in your terminal to install the package:
+```bash
+flutter pub get
+```
 ## Additional information
+For more information about the `waved_audio_player` package, visit the official documentation on [pub.dev](https://pub.dev/packages/waved_audio_player).
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+### Contributing
+Contributions are welcome! Please feel free to submit a pull request or open an issue if you find a bug or have a feature request.
+
+### Issues
+If you encounter any problems or have questions about the package, please open an issue on [GitHub](https://github.com/Ahmed2000Github/waved_audio_player/issues).
+
+### Author
+This package is maintained by [Ahmed EL RHAOUTI](https://github.com/Ahmed2000Github).
