@@ -215,11 +215,11 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
                   ),
                   child: Icon(
                     isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                    color: widget.iconColor ?? Colors.blue,
+                    color: widget.iconColor ,
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
               GestureDetector(
