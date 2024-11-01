@@ -1,6 +1,6 @@
 name: waved_audio_player
 description: "Flutter package designed to provide audio playback with real-time waveform visualization."
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/Ahmed2000Github/waved_audio_player
 repository: https://github.com/Ahmed2000Github/waved_audio_player
 issue_tracker: https://github.com/Ahmed2000Github/waved_audio_player/issues
