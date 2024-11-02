@@ -24,7 +24,9 @@ class WavedAudioPlayer extends StatefulWidget {
   double waveHeight;
   double buttonSize;
   double waveWidth;
-  void Function(Error)? onError;
+  bool showTiming;
+  TextStyle? timingStyle;
+  void Function(WavedAudioPlayerError)? onError;
   WavedAudioPlayer(
       {super.key,
       required this.source,
@@ -36,6 +38,7 @@ class WavedAudioPlayer extends StatefulWidget {
       this.spacing = 4,
       this.waveWidth = 200,
       this.buttonSize = 40,
+      this.showTiming = true,
       this.onError,
       this.waveHeight = 35});
 
@@ -124,9 +127,9 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
     return null;
   }
 
-  _callOnError(Error error) {
+  _callOnError(WavedAudioPlayerError error) {
     if (widget.onError == null) return;
-    print('\x1B[31m $error\x1B[0m');
+    print('\x1B[31m ${error.message}\x1B[0m');
     widget.onError!(error);
   }
 
@@ -160,6 +163,19 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
         isPausing = true;
       });
     });
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final hours = duration.inHours;
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+
+    if (hours > 0) {
+      return "${twoDigits(hours)}:$minutes:$seconds"; // Format as HH:MM:SS
+    } else {
+      return "$minutes:$seconds"; // Format as MM:SS
+    }
   }
 
   List<double> _extractWaveformData(Uint8List audioBytes) {
@@ -197,7 +213,7 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
     return (waveformData.isNotEmpty)
         ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               GestureDetector(
                 onTap: () {
@@ -215,7 +231,8 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
                   ),
                   child: Icon(
                     isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                    color: widget.iconColor ,
+                    color: widget.iconColor,
+                    size: 4 * widget.buttonSize / 5,
                   ),
                 ),
               ),
@@ -240,6 +257,16 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
                       barWidth: widget.barWidth), // Use your wave data
                 ),
               ),
+              if (widget.showTiming)
+                const SizedBox(
+                  width: 10,
+                ),
+              if (widget.showTiming)
+                Center(
+                    child: Text(
+                  _formatDuration(currentPosition),
+                  style: widget.timingStyle,
+                ))
             ],
           )
         : SizedBox(

@@ -27,8 +27,8 @@ To use the `waved_audio_player` package, add it to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  waved_audio_player: ^1.0.0
-  audioplayers: ^x.x.x  # Replace x.x.x with the latest version of audioplayers
+  waved_audio_player: ^1.2.0
+  audioplayers: ^6.1.0 
 ```
 ### Installation
 Run the following command in your terminal to install the package:
@@ -64,8 +64,9 @@ class MyApp extends StatelessWidget {
             waveWidth: 100,
             barWidth: 2,
             buttonSize: 40,
+            showTiming: true,
             onError: (error) {
-              print('Error occurred: $error');
+              print('Error occurred: $error.message');
             },
           ),
         ),
