@@ -39,6 +39,7 @@ class WavedAudioPlayer extends StatefulWidget {
       this.waveWidth = 200,
       this.buttonSize = 40,
       this.showTiming = true,
+      this.timingStyle,
       this.onError,
       this.waveHeight = 35});
 
