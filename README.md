@@ -3,7 +3,7 @@
   <img src="https://github.com/Ahmed2000Github/waved_audio_player/blob/main/screenshots/logo.png?raw=true" alt="logo" width="200"/>
 </div>
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.0.0-blue" alt="Version 1.0.0"/>
+  <img src="https://img.shields.io/badge/version-1.2.0-blue" alt="Version 1.0.0"/>
   <a href="https://pub.dev/packages/waved_audio_player">
     <img src="https://img.shields.io/pub/v/waved_audio_player.svg" alt="Pub Version">
   </a>
