@@ -201,7 +201,7 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
     if (_audioBytes == null) return;
     isPausing
         ? _audioPlayer.resume()
-        : _audioPlayer.play(BytesSource(_audioBytes!));
+        : _audioPlayer.play(BytesSource(_audioBytes!,mimeType: widget.source.mimeType));
   }
 
   void _pauseAudio() async {

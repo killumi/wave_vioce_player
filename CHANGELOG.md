@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2024-11-20
+
+### Changes
+
+---
+
+
+#### `waved_audio_player` - `v1.3.0`
+
+ - Fixing missing MIME type parameter issues
+
+---
+
 ## 2024-11-02
 
 ### Changes

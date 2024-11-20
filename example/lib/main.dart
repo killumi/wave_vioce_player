@@ -94,7 +94,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             WavedAudioPlayer(
               source:
-                  UrlSource('https://download.samplelib.com/mp3/sample-3s.mp3'),
+                  UrlSource('https://download.samplelib.com/mp3/sample-3s.mp3',
+                  mimeType: "mp3"),
               playedColor: Colors.white,
               iconColor: Colors.red,
             ),

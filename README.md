@@ -3,9 +3,9 @@
   <img src="https://github.com/Ahmed2000Github/waved_audio_player/blob/main/screenshots/logo.png?raw=true" alt="logo" width="200"/>
 </div>
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.2.1-blue" alt="Version 1.0.0"/>
+  <img src="https://img.shields.io/badge/version-1.3.0-blue" alt="Version 1.3.0"/>
   <a href="https://pub.dev/packages/waved_audio_player">
-    <img src="https://img.shields.io/pub/v/waved_audio_player.svg" alt="Pub Version">
+    <img src="https://img.shields.io/pub/v/waved_audio_player.svg" alt="Pub Version 1.3.0">
   </a>
 </p>
 A Flutter package for displaying audio waveforms and controlling audio playback with a customizable user interface. Perfect for applications that require audio visualization, such as music players, audio editors, and more.
