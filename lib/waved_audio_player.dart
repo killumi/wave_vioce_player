@@ -55,7 +55,6 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
   bool isPlaying = false;
   bool isPausing = true;
   Uint8List? _audioBytes;
-  String? _mimeType;
 
   @override
   void initState() {
@@ -70,23 +69,19 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
         if (widget.source is AssetSource) {
           _audioBytes = await _loadAssetAudioWaveform(
               (widget.source as AssetSource).path);
-          _mimeType = (widget.source as AssetSource).mimeType;
         } else if (widget.source is UrlSource) {
           _audioBytes =
               await _loadRemoteAudioWaveform((widget.source as UrlSource).url);
-          _mimeType = (widget.source as UrlSource).mimeType;
         } else if (widget.source is DeviceFileSource) {
           _audioBytes = await _loadDeviceFileAudioWaveform(
               (widget.source as DeviceFileSource).path);
-          _mimeType = (widget.source as DeviceFileSource).mimeType;
         } else if (widget.source is BytesSource) {
           _audioBytes = (widget.source as BytesSource).bytes;
-          _mimeType = (widget.source as BytesSource).mimeType;
         }
         waveformData = _extractWaveformData(_audioBytes!);
         setState(() {});
       }
-      _audioPlayer.setSource(BytesSource(_audioBytes!, mimeType: _mimeType));
+      _audioPlayer.setSource(BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
     } catch (e) {
       _callOnError(WavedAudioPlayerError("Error loading audio: $e"));
     }
