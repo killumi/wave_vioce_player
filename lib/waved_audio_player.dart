@@ -55,6 +55,7 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
   bool isPlaying = false;
   bool isPausing = true;
   Uint8List? _audioBytes;
+  Duration? lastRemainingTime;
 
   @override
   void initState() {
@@ -67,6 +68,99 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
   // void dispose() {
   //   _audioPlayer.dispose();
   //   super.dispose();
+  // }
+
+  // String _formatRemainingDuration(Duration duration) {
+  //   String twoDigits(int n) => n.toString().padLeft(2, '0');
+  //   final hours = duration.inHours;
+  //   final minutes = twoDigits(duration.inMinutes.remainder(60));
+  //   final seconds = twoDigits(duration.inSeconds.remainder(60));
+
+  //   if (hours > 0) {
+  //     return "-${twoDigits(hours)}:$minutes:$seconds"; // Формат: -HH:MM:SS
+  //   } else {
+  //     return "-$minutes:$seconds"; // Формат: -MM:SS
+  //   }
+  // }
+
+  // Widget _buildTimingText() {
+  //   if (audioDuration == Duration.zero) {
+  //     return Text(
+  //       "00:00",
+  //       style: widget.timingStyle,
+  //     );
+  //   }
+
+  //   if (!isPlaying && lastRemainingTime != null) {
+  //     return Text(
+  //       _formatDuration(lastRemainingTime!),
+  //       style: widget.timingStyle,
+  //     );
+  //   }
+
+  //   final remaining = audioDuration - currentPosition;
+  //   return Text(
+  //     _formatDuration(remaining),
+  //     style: widget.timingStyle,
+  //   );
+  // }
+
+  Widget _buildTimingText() {
+    if (audioDuration == Duration.zero) {
+      // Если аудио ещё загружается, показываем временную надпись
+      return Text(
+        _formatDuration(audioDuration), // Показывает 00:00 при загрузке
+        style: widget.timingStyle,
+      );
+    }
+
+    // Если на паузе, показываем сохранённое время
+    if (!isPlaying && lastRemainingTime != null) {
+      return Text(
+        _formatDuration(lastRemainingTime!),
+        style: widget.timingStyle,
+      );
+    }
+
+    // Показываем оставшееся время
+    final remaining = audioDuration - currentPosition;
+    return Text(
+      _formatDuration(remaining), // Используем общий формат MM:SS
+      style: widget.timingStyle,
+    );
+  }
+
+  // Future<void> _loadWaveform() async {
+  //   try {
+  //     if (_audioBytes == null) {
+  //       if (widget.source is AssetSource) {
+  //         _audioBytes = await _loadAssetAudioWaveform(
+  //             (widget.source as AssetSource).path);
+  //       } else if (widget.source is UrlSource) {
+  //         _audioBytes =
+  //             await _loadRemoteAudioWaveform((widget.source as UrlSource).url);
+  //       } else if (widget.source is DeviceFileSource) {
+  //         _audioBytes = await _loadDeviceFileAudioWaveform(
+  //             (widget.source as DeviceFileSource).path);
+  //       } else if (widget.source is BytesSource) {
+  //         _audioBytes = (widget.source as BytesSource).bytes;
+  //       }
+  //       waveformData = _extractWaveformData(_audioBytes!);
+  //       setState(() {});
+  //     }
+  //     await _audioPlayer.setSource(
+  //         BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
+
+  //     // Получаем длительность
+  //     final duration = await _audioPlayer.getDuration();
+  //     if (duration != null) {
+  //       setState(() {
+  //         audioDuration = duration;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     _callOnError(WavedAudioPlayerError("Error loading audio: $e"));
+  //   }
   // }
 
   Future<void> _loadWaveform() async {
@@ -84,11 +178,26 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
         } else if (widget.source is BytesSource) {
           _audioBytes = (widget.source as BytesSource).bytes;
         }
+
         waveformData = _extractWaveformData(_audioBytes!);
-        setState(() {});
+
+        if (mounted) {
+          setState(() {});
+        }
       }
-      _audioPlayer.setSource(
+
+      await _audioPlayer.setSource(
           BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
+
+      // Получаем длительность
+      final duration = await _audioPlayer.getDuration();
+      if (duration != null) {
+        if (mounted) {
+          setState(() {
+            audioDuration = duration;
+          });
+        }
+      }
     } catch (e) {
       _callOnError(WavedAudioPlayerError("Error loading audio: $e"));
     }
@@ -275,6 +384,21 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
   //           .play(BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
   // }
 
+  // void _playAudio() async {
+  //   if (_audioBytes == null) return;
+
+  //   // Если достигли конца, возвращаемся в начало
+  //   if (currentPosition >= audioDuration) {
+  //     await _audioPlayer.seek(Duration.zero);
+  //   }
+
+  //   // Проигрываем в зависимости от текущего состояния
+  //   isPausing
+  //       ? await _audioPlayer.resume()
+  //       : await _audioPlayer
+  //           .play(BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
+  // }
+
   void _playAudio() async {
     if (_audioBytes == null) return;
 
@@ -282,6 +406,9 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
     if (currentPosition >= audioDuration) {
       await _audioPlayer.seek(Duration.zero);
     }
+
+    // Обнуляем lastRemainingTime, так как начинается активное воспроизведение
+    lastRemainingTime = null;
 
     // Проигрываем в зависимости от текущего состояния
     isPausing
@@ -291,6 +418,7 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
   }
 
   void _pauseAudio() async {
+    lastRemainingTime = audioDuration - currentPosition;
     _audioPlayer.pause();
     isPausing = true;
   }
@@ -348,12 +476,7 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
                 const SizedBox(
                   width: 10,
                 ),
-              if (widget.showTiming)
-                Center(
-                    child: Text(
-                  _formatDuration(currentPosition),
-                  style: widget.timingStyle,
-                ))
+              if (widget.showTiming) Center(child: _buildTimingText())
             ],
           )
         : SizedBox(
