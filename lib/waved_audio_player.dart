@@ -173,30 +173,66 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
   //   });
   // }
 
-  void _setupAudioPlayer() {
+  // void _setupAudioPlayer() {
+  //   _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
+  //     setState(() {
+  //       isPlaying = (state == PlayerState.playing);
+  //     });
+  //   });
+
+  //   _audioPlayer.onPlayerComplete.listen((event) {
+  //     setState(() {
+  //       isPlaying = false; // Останавливаем
+  //       currentPosition = Duration.zero; // Возвращаем на начало
+  //     });
+  //   });
+
+  //   _audioPlayer.onDurationChanged.listen((Duration duration) {
+  //     setState(() {
+  //       audioDuration = duration;
+  //     });
+  //   });
+
+  //   _audioPlayer.onPositionChanged.listen((Duration position) {
+  //     setState(() {
+  //       currentPosition = position;
+  //     });
+  //   });
+  // }
+
+  void _setupAudioPlayer() async {
+    await Future.delayed(const Duration(seconds: 1));
     _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
-      setState(() {
-        isPlaying = (state == PlayerState.playing);
-      });
+      if (mounted) {
+        setState(() {
+          isPlaying = (state == PlayerState.playing);
+        });
+      }
     });
 
     _audioPlayer.onPlayerComplete.listen((event) {
-      setState(() {
-        isPlaying = false; // Останавливаем
-        currentPosition = Duration.zero; // Возвращаем на начало
-      });
+      if (mounted) {
+        setState(() {
+          isPlaying = false; // Останавливаем
+          currentPosition = Duration.zero; // Возвращаем на начало
+        });
+      }
     });
 
     _audioPlayer.onDurationChanged.listen((Duration duration) {
-      setState(() {
-        audioDuration = duration;
-      });
+      if (mounted) {
+        setState(() {
+          audioDuration = duration;
+        });
+      }
     });
 
     _audioPlayer.onPositionChanged.listen((Duration position) {
-      setState(() {
-        currentPosition = position;
-      });
+      if (mounted) {
+        setState(() {
+          currentPosition = position;
+        });
+      }
     });
   }
 
