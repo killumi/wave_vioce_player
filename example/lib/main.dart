@@ -69,42 +69,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const Text(
               "Play from Asset:",
-              style:  TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            WavedAudioPlayer(
-              source: AssetSource('assets/sample.mp3'),
-              onError: (err) {
-                print('$err');
-              },
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            const Text("Play from Url:",style: TextStyle(
-              fontSize: 20,
-              
-            ),),
-             const SizedBox(
-              height: 10,
-            ),
-            WavedAudioPlayer(
-              source:
-                  UrlSource('https://download.samplelib.com/mp3/sample-3s.mp3',
-                  mimeType: "mp3"),
-              playedColor: Colors.white,
-              iconColor: Colors.red,
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-             if (filePath.isNotEmpty)
-              const Text(
-              "Play from Device:",
               style: TextStyle(
                 fontSize: 20,
               ),
@@ -112,8 +76,47 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(
               height: 10,
             ),
+            WavedAudioPlayer(
+              source: AssetSource('assets/sample.mp3', mimeType: "audio/mp3"),
+              onError: (err) {
+                print('$err');
+              },
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            const Text(
+              "Play from Url:",
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            WavedAudioPlayer(
+              source: UrlSource(
+                  'https://download.samplelib.com/mp3/sample-3s.mp3',
+                  mimeType: "audio/mp3"),
+              playedColor: Colors.white,
+              iconColor: Colors.red,
+            ),
+            const SizedBox(
+              height: 30,
+            ),
             if (filePath.isNotEmpty)
-              WavedAudioPlayer(source: DeviceFileSource(filePath)),
+              const Text(
+                "Play from Device:",
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+            const SizedBox(
+              height: 10,
+            ),
+            if (filePath.isNotEmpty)
+              WavedAudioPlayer(
+                  source: DeviceFileSource(filePath, mimeType: 'audio/mp3')),
           ],
         ),
       ),

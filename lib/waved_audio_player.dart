@@ -63,6 +63,12 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
     _setupAudioPlayer();
   }
 
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadWaveform() async {
     try {
       if (_audioBytes == null) {
@@ -81,7 +87,8 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
         waveformData = _extractWaveformData(_audioBytes!);
         setState(() {});
       }
-      _audioPlayer.setSource(BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
+      _audioPlayer.setSource(
+          BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
     } catch (e) {
       _callOnError(WavedAudioPlayerError("Error loading audio: $e"));
     }
@@ -134,34 +141,61 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
     widget.onError!(error);
   }
 
+  // void _setupAudioPlayer() {
+  //   _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
+  //     if (state == PlayerState.playing) {
+  //       setState(() {
+  //         isPlaying = true;
+  //       });
+  //     } else {
+  //       setState(() {
+  //         isPlaying = false;
+  //       });
+  //     }
+  //   });
+  //   _audioPlayer.onPlayerComplete.listen((event) {
+  //     isPausing = false;
+  //     _audioPlayer.release();
+  //   });
+
+  //   _audioPlayer.onDurationChanged.listen((Duration duration) {
+  //     setState(() {
+  //       audioDuration = duration;
+  //       isPausing = true;
+  //     });
+  //   });
+
+  //   _audioPlayer.onPositionChanged.listen((Duration position) {
+  //     setState(() {
+  //       currentPosition = position;
+  //       isPausing = true;
+  //     });
+  //   });
+  // }
+
   void _setupAudioPlayer() {
     _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
-      if (state == PlayerState.playing) {
-        setState(() {
-          isPlaying = true;
-        });
-      } else {
-        setState(() {
-          isPlaying = false;
-        });
-      }
+      setState(() {
+        isPlaying = (state == PlayerState.playing);
+      });
     });
+
     _audioPlayer.onPlayerComplete.listen((event) {
-      isPausing = false;
-      _audioPlayer.release();
+      setState(() {
+        isPlaying = false; // Останавливаем
+        currentPosition = Duration.zero; // Возвращаем на начало
+      });
     });
 
     _audioPlayer.onDurationChanged.listen((Duration duration) {
       setState(() {
         audioDuration = duration;
-        isPausing = true;
       });
     });
 
     _audioPlayer.onPositionChanged.listen((Duration position) {
       setState(() {
         currentPosition = position;
-        isPausing = true;
       });
     });
   }
@@ -197,11 +231,27 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
     _audioPlayer.seek(newPosition);
   }
 
+  // void _playAudio() async {
+  //   if (_audioBytes == null) return;
+  //   isPausing
+  //       ? _audioPlayer.resume()
+  //       : _audioPlayer
+  //           .play(BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
+  // }
+
   void _playAudio() async {
     if (_audioBytes == null) return;
+
+    // Если достигли конца, возвращаемся в начало
+    if (currentPosition >= audioDuration) {
+      await _audioPlayer.seek(Duration.zero);
+    }
+
+    // Проигрываем в зависимости от текущего состояния
     isPausing
-        ? _audioPlayer.resume()
-        : _audioPlayer.play(BytesSource(_audioBytes!,mimeType: widget.source.mimeType));
+        ? await _audioPlayer.resume()
+        : await _audioPlayer
+            .play(BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
   }
 
   void _pauseAudio() async {
