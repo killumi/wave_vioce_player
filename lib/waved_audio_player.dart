@@ -47,6 +47,8 @@ class WavedAudioPlayer extends StatefulWidget {
   _WavedAudioPlayerState createState() => _WavedAudioPlayerState();
 }
 
+AudioPlayer? activePlayer;
+
 class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   List<double> waveformData = [];
@@ -63,47 +65,6 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
     _loadWaveform();
     _setupAudioPlayer();
   }
-
-  // @override
-  // void dispose() {
-  //   _audioPlayer.dispose();
-  //   super.dispose();
-  // }
-
-  // String _formatRemainingDuration(Duration duration) {
-  //   String twoDigits(int n) => n.toString().padLeft(2, '0');
-  //   final hours = duration.inHours;
-  //   final minutes = twoDigits(duration.inMinutes.remainder(60));
-  //   final seconds = twoDigits(duration.inSeconds.remainder(60));
-
-  //   if (hours > 0) {
-  //     return "-${twoDigits(hours)}:$minutes:$seconds"; // Формат: -HH:MM:SS
-  //   } else {
-  //     return "-$minutes:$seconds"; // Формат: -MM:SS
-  //   }
-  // }
-
-  // Widget _buildTimingText() {
-  //   if (audioDuration == Duration.zero) {
-  //     return Text(
-  //       "00:00",
-  //       style: widget.timingStyle,
-  //     );
-  //   }
-
-  //   if (!isPlaying && lastRemainingTime != null) {
-  //     return Text(
-  //       _formatDuration(lastRemainingTime!),
-  //       style: widget.timingStyle,
-  //     );
-  //   }
-
-  //   final remaining = audioDuration - currentPosition;
-  //   return Text(
-  //     _formatDuration(remaining),
-  //     style: widget.timingStyle,
-  //   );
-  // }
 
   Widget _buildTimingText() {
     if (audioDuration == Duration.zero) {
@@ -129,39 +90,6 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
       style: widget.timingStyle,
     );
   }
-
-  // Future<void> _loadWaveform() async {
-  //   try {
-  //     if (_audioBytes == null) {
-  //       if (widget.source is AssetSource) {
-  //         _audioBytes = await _loadAssetAudioWaveform(
-  //             (widget.source as AssetSource).path);
-  //       } else if (widget.source is UrlSource) {
-  //         _audioBytes =
-  //             await _loadRemoteAudioWaveform((widget.source as UrlSource).url);
-  //       } else if (widget.source is DeviceFileSource) {
-  //         _audioBytes = await _loadDeviceFileAudioWaveform(
-  //             (widget.source as DeviceFileSource).path);
-  //       } else if (widget.source is BytesSource) {
-  //         _audioBytes = (widget.source as BytesSource).bytes;
-  //       }
-  //       waveformData = _extractWaveformData(_audioBytes!);
-  //       setState(() {});
-  //     }
-  //     await _audioPlayer.setSource(
-  //         BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
-
-  //     // Получаем длительность
-  //     final duration = await _audioPlayer.getDuration();
-  //     if (duration != null) {
-  //       setState(() {
-  //         audioDuration = duration;
-  //       });
-  //     }
-  //   } catch (e) {
-  //     _callOnError(WavedAudioPlayerError("Error loading audio: $e"));
-  //   }
-  // }
 
   Future<void> _loadWaveform() async {
     try {
@@ -250,65 +178,6 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
     widget.onError!(error);
   }
 
-  // void _setupAudioPlayer() {
-  //   _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
-  //     if (state == PlayerState.playing) {
-  //       setState(() {
-  //         isPlaying = true;
-  //       });
-  //     } else {
-  //       setState(() {
-  //         isPlaying = false;
-  //       });
-  //     }
-  //   });
-  //   _audioPlayer.onPlayerComplete.listen((event) {
-  //     isPausing = false;
-  //     _audioPlayer.release();
-  //   });
-
-  //   _audioPlayer.onDurationChanged.listen((Duration duration) {
-  //     setState(() {
-  //       audioDuration = duration;
-  //       isPausing = true;
-  //     });
-  //   });
-
-  //   _audioPlayer.onPositionChanged.listen((Duration position) {
-  //     setState(() {
-  //       currentPosition = position;
-  //       isPausing = true;
-  //     });
-  //   });
-  // }
-
-  // void _setupAudioPlayer() {
-  //   _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
-  //     setState(() {
-  //       isPlaying = (state == PlayerState.playing);
-  //     });
-  //   });
-
-  //   _audioPlayer.onPlayerComplete.listen((event) {
-  //     setState(() {
-  //       isPlaying = false; // Останавливаем
-  //       currentPosition = Duration.zero; // Возвращаем на начало
-  //     });
-  //   });
-
-  //   _audioPlayer.onDurationChanged.listen((Duration duration) {
-  //     setState(() {
-  //       audioDuration = duration;
-  //     });
-  //   });
-
-  //   _audioPlayer.onPositionChanged.listen((Duration position) {
-  //     setState(() {
-  //       currentPosition = position;
-  //     });
-  //   });
-  // }
-
   void _setupAudioPlayer() async {
     await Future.delayed(const Duration(seconds: 1));
     _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
@@ -376,31 +245,15 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
     _audioPlayer.seek(newPosition);
   }
 
-  // void _playAudio() async {
-  //   if (_audioBytes == null) return;
-  //   isPausing
-  //       ? _audioPlayer.resume()
-  //       : _audioPlayer
-  //           .play(BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
-  // }
-
-  // void _playAudio() async {
-  //   if (_audioBytes == null) return;
-
-  //   // Если достигли конца, возвращаемся в начало
-  //   if (currentPosition >= audioDuration) {
-  //     await _audioPlayer.seek(Duration.zero);
-  //   }
-
-  //   // Проигрываем в зависимости от текущего состояния
-  //   isPausing
-  //       ? await _audioPlayer.resume()
-  //       : await _audioPlayer
-  //           .play(BytesSource(_audioBytes!, mimeType: widget.source.mimeType));
-  // }
-
   void _playAudio() async {
     if (_audioBytes == null) return;
+    if (activePlayer != null && activePlayer != _audioPlayer) {
+      // Останавливаем текущий активный плеер
+      await activePlayer!.stop();
+    }
+
+    // Переключаем глобальную переменную на текущий плеер
+    activePlayer = _audioPlayer;
 
     // Если достигли конца, возвращаемся в начало
     if (currentPosition >= audioDuration) {
