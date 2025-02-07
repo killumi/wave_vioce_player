@@ -250,14 +250,17 @@ class _WavedAudioPlayerState extends State<WavedAudioPlayer> {
     if (activePlayer != null && activePlayer != _audioPlayer) {
       // Останавливаем текущий активный плеер
       await activePlayer!.stop();
+      await activePlayer!.setVolume(1.0);
     }
 
     // Переключаем глобальную переменную на текущий плеер
     activePlayer = _audioPlayer;
+    await activePlayer!.setVolume(1.0);
 
     // Если достигли конца, возвращаемся в начало
     if (currentPosition >= audioDuration) {
       await _audioPlayer.seek(Duration.zero);
+      await _audioPlayer.setVolume(1.0);
     }
 
     // Обнуляем lastRemainingTime, так как начинается активное воспроизведение
